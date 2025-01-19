@@ -1,5 +1,5 @@
-from aicore.components.database.model.device import Device
-from aicore.components.retrieval.embedding import *
+from components.database.model.device import Device
+from components.retrieval.embedding import *
 
 import psycopg2
 import os
