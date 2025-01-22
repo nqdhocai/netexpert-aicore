@@ -79,7 +79,7 @@ model = genai.GenerativeModel(
           parameters = content.Schema(
             type = content.Type.OBJECT,
             enum = [],
-            required = ["budget", "number_of_devices", "preferred_frequency"],
+            required = ["budget", "number_of_devices", "preferred_frequency", "coverage_required"],
             properties = {
               "budget": content.Schema(
                 type = content.Type.NUMBER,
@@ -91,9 +91,14 @@ model = genai.GenerativeModel(
               "preferred_frequency": content.Schema(
                 type = content.Type.NUMBER,
               ),
+              "coverage_required": content.Schema(
+                type = content.Type.STRING,
+                description = "Ước tính diện tích phủ sóng"
+              ),
               "brand_preference": content.Schema(
                 type = content.Type.STRING,
-              ),
+                enum=[]
+              )
             },
           ),
         ),
