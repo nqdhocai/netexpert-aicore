@@ -29,7 +29,7 @@ def create_population(data, population_size, num_devices, coverage_required):
 
 
 # Hàm đánh giá
-def fitness_function(solution, budget, num_devices, coverage_required, preferred_frequency, brand_preference):
+def fitness_function(solution, budget, num_devices, coverage_required, preferred_frequency, brand_preference): #[TODO] fix the fitness function to use data type of preferred_frequency as NUMBER
     total_cost = sum(device['price'] for device in solution)
     total_devices_supported = sum(
         int(re.findall(r'\d+', device['max_devices_supported'])[0]) for device in solution if len(re.findall(r'\d+', device['max_devices_supported'])) > 0)
