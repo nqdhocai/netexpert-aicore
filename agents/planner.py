@@ -90,10 +90,11 @@ model = genai.GenerativeModel(
               ),
               "preferred_frequency": content.Schema(
                 type = content.Type.NUMBER,
+                description = "ước tính tần số mà người dùng mong muốn (2.4Ghz, 5Ghz, 6Ghz) với đơn vị chuẩn là Mbps"
               ),
               "coverage_required": content.Schema(
-                type = content.Type.STRING,
-                description = "Ước tính diện tích phủ sóng"
+                type = content.Type.NUMBER,
+                description = "Ước tính diện tích phủ sóng với đơn vị chuẩn là m^2"
               ),
               "brand_preference": content.Schema(
                 type = content.Type.STRING,
