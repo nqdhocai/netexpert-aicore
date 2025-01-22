@@ -89,7 +89,7 @@ model = genai.GenerativeModel(
                 type = content.Type.NUMBER,
               ),
               "preferred_frequency": content.Schema(
-                type = content.Type.NUMBER,
+                type = content.Type.STRING,
                 description = "ước tính tần số mà người dùng mong muốn (2.4Ghz, 5Ghz, 6Ghz) với đơn vị chuẩn là Mbps"
               ),
               "coverage_required": content.Schema(
