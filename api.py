@@ -13,13 +13,12 @@ from pydantic import BaseModel
 from typing import List
 
 
-# Model cho thiết bị (device)
 class Device(BaseModel):
     quantity: float
     id: str
     device_type: str
     name: str
-
+    img_url: str
 
 # Model cho kết nối trong sơ đồ mạng (network diagram)
 class NetworkDiagram(BaseModel):
