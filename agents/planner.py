@@ -27,7 +27,7 @@ model = genai.GenerativeModel(
       function_declarations = [
         genai.protos.FunctionDeclaration(
           name = "normal_chat",
-          description = "khi câu nói của ngừoi dùng không liên quan đến chủ để về mạng và thiêt bị mạng thì sử dụng để trả lời như thông thường",
+          description = "Handles user questions or statements that are not related to networking, network equipment, or the Telecommunications field. This function will respond in a normal manner, appropriate to the next issues of the day.",
           parameters = content.Schema(
             type = content.Type.OBJECT,
             enum = [],
@@ -41,7 +41,7 @@ model = genai.GenerativeModel(
         ),
         genai.protos.FunctionDeclaration(
           name = "technical_chat",
-          description = "trả lời các vấn đề liên quan đến kĩ thuật về mạng hoặc thiết bị mạng",
+          description = "Support answering technical questions related to computer networks, network equipment, and telecommunications issues. The system has the ability to automatically standardize questions to ensure accurate and contextual answers. Suitable for both individual users and technical experts.",
           parameters = content.Schema(
             type = content.Type.OBJECT,
             enum = [],
@@ -49,7 +49,7 @@ model = genai.GenerativeModel(
             properties = {
               "question": content.Schema(
                 type = content.Type.STRING,
-                description="nội dung câu hỏi (chuẩn hóa lại câu hỏi nếu cẩn thiết)"
+                description="The content of the question that needs to be answered. The system will automatically standardize the question (if necessary) to optimize the processing."
               ),
             },
           ),
@@ -168,3 +168,4 @@ def get_action(history):
         return (fn.name, dict(fn.args))
     else:
         return None
+
