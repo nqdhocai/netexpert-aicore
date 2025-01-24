@@ -1,6 +1,8 @@
 from components.database.model.device import Device
 from components.retrieval.embedding import *
 
+from ast import literal_eval
+
 import psycopg2
 import os
 
