@@ -12,6 +12,38 @@ import os
 from pydantic import BaseModel
 from typing import List
 
+# Model cho thiết bị (device)
+class Device(BaseModel):
+    quantity: float
+    id: str
+    device_type: str
+    name: str
+    img_url: str
+
+
+# Model cho kết nối trong sơ đồ mạng (network diagram)
+class NetworkDiagram(BaseModel):
+    connection_to: List[str]
+    device_id: str
+
+
+# Model cho mạng (network)
+class Network(BaseModel):
+    type: str
+    devices: List[Device]
+    network_diagram: List[NetworkDiagram]
+    cost: float
+
+
+# Model chính cho response
+class ResponseModel(BaseModel):
+    status: str
+    response: str
+    devices: List  # Có thể thay thế bằng List[Device] nếu có dữ liệu cụ thể
+    networks: List[Network]
+    blogs: List  # Có thể thay thế bằng List[Blog] nếu có dữ liệu cụ thể
+    user_id: int
+
 class BlogViewedModel(BaseModel):
     blog_id: int
     user_id: str
