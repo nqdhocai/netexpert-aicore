@@ -38,7 +38,7 @@ except Exception as e:
     print(f"Failed to connect: {e}")
 
 def fetch_data_model(data_query):
-    columns = "id, name, device_type, ethernet_ports, wifi_ports, bandwidth, bandwidth_6_ghz, bandwidth_5_ghz, bandwidth_2_4_ghz, supported_protocols, max_devices_supported, poe_support, vlan_support, security_features, coverage, frequency, power_consumption, latency, manufacturer, price, url, embedding"
+    columns = "id, name, device_type, ethernet_ports, wifi_ports, bandwidth, bandwidth_6_ghz, bandwidth_5_ghz, bandwidth_2_4_ghz, supported_protocols, max_devices_supported, poe_support, vlan_support, security_features, coverage, frequency, power_consumption, latency, manufacturer, price, url, img_url, embedding"
     columns = columns.split(", ")
     data = {}
     for col, val in zip(columns, data_query):
