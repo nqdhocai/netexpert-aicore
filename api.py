@@ -12,6 +12,7 @@ import os
 from pydantic import BaseModel
 from typing import List
 
+from components.database.database import get_related_blogs
 # Model cho thiết bị (device)
 class Device(BaseModel):
     quantity: float
