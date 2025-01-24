@@ -161,3 +161,22 @@ def get_device_by_price_range(budget):
 
     result = cursor.fetchall()
     return result
+
+def get_blog_by_query(query):
+    query_emb = get_embedding_query(query)
+    cursor = connection.cursor()
+    vector_str = f"[{','.join(map(str, query_emb))}]"
+
+    # Thực hiện truy vấn tìm kiếm vector tương tự
+    cursor.execute("""
+            SELECT blog_id, content, embedding <=> %s AS distance
+            FROM blog_chunks
+            ORDER BY distance
+            LIMIT 3;
+        """, (vector_str,))
+
+    # In kết quả
+    result = cursor.fetchall()
+    blog_ids = list(set([str(i[0]) for i in result]))
+    chunk_contents = [i[1] for i in result]
+    return blog_ids, chunk_contents
