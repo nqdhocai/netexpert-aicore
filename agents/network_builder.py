@@ -9,6 +9,12 @@ def household_network_build(budget, number_of_devices, preferred_frequency, cove
     devices = get_household_network_solution(budget, number_of_devices, coverage_required, preferred_frequency, brand_preference)
     cost = sum([float(i['price']) for i in devices])
     graph = get_graph(devices)
+
+    img_urls = {
+        i['id']: i['img_url'] for i in devices
+    }
+    for device in graph['devices']:
+        device['img_url'] = img_urls[device['id']]
     return {"networks": [
         {
             "type": "cost_opt",
