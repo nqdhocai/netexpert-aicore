@@ -180,3 +180,44 @@ def get_blog_by_query(query):
     blog_ids = list(set([str(i[0]) for i in result]))
     chunk_contents = [i[1] for i in result]
     return blog_ids, chunk_contents
+def get_blog_emb_by_id(blog_id):
+    cursor = connection.cursor()
+    cursor.execute("""
+                SELECT embedding
+                FROM blog_chunks
+                WHERE id = %s;
+            """, (blog_id,))
+    embedding = cursor.fetchone()
+    return literal_eval(embedding[0])
+
+def get_related_blog(blog_id):
+    blog_emb = get_blog_emb_by_id(blog_id)
+    cursor = connection.cursor()
+    vector_str = f"[{','.join(map(str, blog_emb))}]"
+
+    # Thực hiện truy vấn tìm kiếm vector tương tự
+    cursor.execute("""
+                SELECT id, embedding <=> %s AS distance
+                FROM blog_chunks
+                ORDER BY distance
+                LIMIT 3;
+            """, (vector_str,))
+
+    # In kết quả
+    result = cursor.fetchall()
+    related_blogs = {
+        i[0]: i[1] for i in result
+    }
+    return related_blogs
+
+def get_related_blogs(blog_ids):
+    related_blogs = {}
+    for blog_id in blog_ids:
+        blogs = get_related_blog(blog_id)
+        for key, val in blogs.items():
+            if key in related_blogs.keys():
+                related_blogs[key] += blogs[key]
+            else:
+                related_blogs[key] = blogs[key]
+    related_blogs = sorted(related_blogs.items(), key=lambda item: item[1], reverse=True)
+    return related_blogs
