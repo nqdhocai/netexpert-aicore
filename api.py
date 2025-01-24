@@ -12,37 +12,17 @@ import os
 from pydantic import BaseModel
 from typing import List
 
+class BlogViewedModel(BaseModel):
+    blog_id: int
+    user_id: str
+    viewed_blogs: List[int]
 
-class Device(BaseModel):
-    quantity: float
-    id: str
-    device_type: str
-    name: str
-    img_url: str
+class RelatedBlog(BaseModel):
+    blog_id: int
+    similarity_score: float
 
-# Model cho kết nối trong sơ đồ mạng (network diagram)
-class NetworkDiagram(BaseModel):
-    connection_to: List[str]
-    device_id: str
-
-
-# Model cho mạng (network)
-class Network(BaseModel):
-    type: str
-    devices: List[Device]
-    network_diagram: List[NetworkDiagram]
-    cost: float
-
-
-# Model chính cho response
-class ResponseModel(BaseModel):
-    status: str
-    response: str
-    devices: List  # Có thể thay thế bằng List[Device] nếu có dữ liệu cụ thể
-    networks: List[Network]
-    blogs: List  # Có thể thay thế bằng List[Blog] nếu có dữ liệu cụ thể
-    user_id: int
-
+class RelatedBlogResponse(BaseModel):
+    related_blogs: List[RelatedBlog]
 
 app = FastAPI()
 
@@ -84,8 +64,28 @@ def get_recommendation(request: ChatRequest, response_model=ResponseModel):
             }
         )
 
+@app.post("/api/v1/blog/related")
+def related_blogs(request: BlogViewedModel, response_model=RelatedBlogResponse):
+    blog_id = request.blog_id
+    viewed_blogs = request.viewed_blogs
+    viewed_blogs.append(blog_id)
+
+    related_blogs = get_related_blogs(viewed_blogs)
+    if len(related_blogs) > 5:
+        related_blogs = related_blogs[:5]
+    related_blogs = [
+        {
+            "blog_id": i[0],
+            "similarity_score": i[1]
+        } for i in related_blogs
+    ]
+    response = {
+        "related_blogs": related_blogs
+    }
+    return RelatedBlogResponse(**response)
 
 if __name__ == '__main__':
     if __name__ == "__main__":
         port = int(os.environ.get("PORT", 15085))
         uvicorn.run(app, host="0.0.0.0", port=port)
+
