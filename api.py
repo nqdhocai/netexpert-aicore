@@ -43,7 +43,6 @@ class ResponseModel(BaseModel):
     devices: List  # Có thể thay thế bằng List[Device] nếu có dữ liệu cụ thể
     networks: List[Network]
     blogs: List  # Có thể thay thế bằng List[Blog] nếu có dữ liệu cụ thể
-    user_id: int
 
 class BlogViewedModel(BaseModel):
     blog_id: int
@@ -69,13 +68,10 @@ def root():
 def get_recommendation(request: ChatRequest, response_model=ResponseModel):
     try:
         # Xử lý logic đề xuất dựa trên request
-        user_id = request.user_id
         location = request.location
         history = [i.model_dump() for i in request.history]
 
         response = get_response(history)
-        if user_id:
-            response['user_id'] = user_id
         # Trả về kết quả
         print(response)
         return ResponseModel(**response)
