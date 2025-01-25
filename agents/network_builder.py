@@ -4,6 +4,8 @@ from google.ai.generativelanguage_v1beta.types import content
 from ast import literal_eval
 
 from components.network_opt_algorithm.household_genetic_alg import get_household_network_solution
+from components.network_opt_algorithm.business_genetic_algorithm import get_business_network_solution
+
 
 def household_network_build(budget, number_of_devices, preferred_frequency, coverage_required, brand_preference=[]):
     devices = get_household_network_solution(budget, number_of_devices, coverage_required, preferred_frequency, brand_preference)
@@ -25,10 +27,17 @@ def household_network_build(budget, number_of_devices, preferred_frequency, cove
     ]}
 
 
+
 def business_network_build(budget, number_of_devices, vlan_requirement, poe_devices, bandwidth_estimation, security_level):
-    devices = get_household_network_solution(budget, number_of_devices, 0, 0, brand_preference=[])
+    devices = get_business_network_solution(budget, number_of_devices, vlan_requirement, poe_devices, bandwidth_estimation, security_level)
     cost = sum([float(i['price']) for i in devices])
     graph = get_graph(devices)
+
+    img_urls = {
+        i['id']: i['img_url'] for i in devices
+    }
+    for device in graph['devices']:
+        device['img_url'] = img_urls[device['id']]
     return {"networks": [
         {
             "type": "cost_opt",
