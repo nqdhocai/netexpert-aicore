@@ -130,17 +130,17 @@ model = genai.GenerativeModel(
                 type = content.Type.NUMBER,
               ),
               "number_of_devices": content.Schema(
-                type = content.Type.NUMBER
+                type = content.Type.INTEGER
               ),
               "vlan_requirement": content.Schema(
-                type = content.Type.BOOLEAN,
+                type = content.Type.STRING,
               ),
               "poe_devices": content.Schema(
-                type = content.Type.NUMBER,
+                type = content.Type.INTEGER,
               ),
               "bandwidth_estimation": content.Schema(
                 type = content.Type.NUMBER,
-                description="ước tính băng thông của mạng (Mbps)"
+                description="ước tính băng thông của mạng (chuẩn hóa lại với đơn vị Mbps)"
               ),
               "security_level": content.Schema(
                 type = content.Type.STRING,
@@ -168,4 +168,3 @@ def get_action(history):
         return (fn.name, dict(fn.args))
     else:
         return None
-
