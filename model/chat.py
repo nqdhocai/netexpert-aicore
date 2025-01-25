@@ -8,6 +8,5 @@ class HistoryItem(BaseModel):
 
 # Model cho request body
 class ChatRequest(BaseModel):
-    user_id: Optional[int] = None
     location: str
     history: List[HistoryItem]
