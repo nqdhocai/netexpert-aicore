@@ -35,6 +35,7 @@ model = genai.GenerativeModel(
             properties = {
               "response": content.Schema(
                 type = content.Type.STRING,
+                description = "response to user statement"
               ),
             },
           ),
