@@ -1,6 +1,6 @@
 from components.database.database import *
 
-def rcm_devices(query, budget=0):
+def rcm_devices(query, response, budget=0):
     device_ids = [i[0] for i in query_by_vector(query)]
     result = []
     if budget != 0:
@@ -16,5 +16,6 @@ def rcm_devices(query, budget=0):
     else:
         result = device_ids[:5]
     return {
-        "devices": result
+        "devices": result,
+        "response": response
     }
