@@ -19,6 +19,7 @@ generation_config = {
   "response_mime_type": "text/plain",
 }
 
+
 model = genai.GenerativeModel(
   model_name="gemini-2.0-flash-exp",
   generation_config=generation_config,
@@ -35,7 +36,6 @@ model = genai.GenerativeModel(
             properties = {
               "response": content.Schema(
                 type = content.Type.STRING,
-                description = "response to user statement"
               ),
             },
           ),
@@ -61,7 +61,7 @@ model = genai.GenerativeModel(
           parameters = content.Schema(
             type = content.Type.OBJECT,
             enum = [],
-            required = ['query'],
+            required = ['query', "response"],
             properties = {
               "budget": content.Schema(
                 type = content.Type.NUMBER,
@@ -70,6 +70,10 @@ model = genai.GenerativeModel(
               "query": content.Schema(
                   type = content.Type.STRING,
                   description="tối ưu câu truy vấn theo dạng 1 chuỗi requirement name: detail để truy vấn với vector database"
+              ),
+              "response": content.Schema(
+                type = content.Type.STRING,
+                description = "statements before product recommendation"
               )
             },
           ),
@@ -80,7 +84,7 @@ model = genai.GenerativeModel(
           parameters = content.Schema(
             type = content.Type.OBJECT,
             enum = [],
-            required = ["budget", "number_of_devices", "preferred_frequency", "coverage_required"],
+            required = ["response", "budget", "number_of_devices", "preferred_frequency", "coverage_required"],
             properties = {
               "budget": content.Schema(
                 type = content.Type.NUMBER,
@@ -100,6 +104,10 @@ model = genai.GenerativeModel(
               "brand_preference": content.Schema(
                 type = content.Type.STRING,
                 enum=[]
+              ),
+              "response": content.Schema(
+                type = content.Type.STRING,
+                description = "statement before suggesting network equipment that the user requires"
               )
             },
           ),
@@ -125,7 +133,7 @@ model = genai.GenerativeModel(
           parameters = content.Schema(
             type = content.Type.OBJECT,
             enum = [],
-            required = ["budget", "number_of_devices", "vlan_requirement", "poe_devices", "bandwidth_estimation", "security_level"],
+            required = ["response", "budget", "number_of_devices", "vlan_requirement", "poe_devices", "bandwidth_estimation", "security_level"],
             properties = {
               "budget": content.Schema(
                 type = content.Type.NUMBER,
@@ -147,6 +155,10 @@ model = genai.GenerativeModel(
                 type = content.Type.STRING,
                 description="Mức độ bảo mật mong muốn? (Ví dụ: WPA3, VPN, Firewall)"
               ),
+              "response": content.Schema(
+                type = content.Type.STRING,
+                description = "statement before suggesting network equipment that the user requires"
+              )
             },
           ),
         ),
