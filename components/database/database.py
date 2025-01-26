@@ -1,8 +1,6 @@
 from components.database.model.device import Device
 from components.retrieval.embedding import *
-
 from ast import literal_eval
-
 import psycopg2
 import os
 
@@ -35,10 +33,20 @@ try:
 
     # Close the cursor and connection
     cursor.close()
+    connection.close()
 
 except Exception as e:
     print(f"Failed to connect: {e}")
 
+def get_db_connection():
+    connection = psycopg2.connect(
+        user=USER,
+        password=PASSWORD,
+        host=HOST,
+        port=PORT,
+        dbname=DBNAME
+    )
+    return connection
 def fetch_data_model(data_query):
     columns = "id, name, device_type, ethernet_ports, wifi_ports, bandwidth, bandwidth_6_ghz, bandwidth_5_ghz, bandwidth_2_4_ghz, supported_protocols, max_devices_supported, poe_support, vlan_support, security_features, coverage, frequency, power_consumption, latency, manufacturer, price, url, img_url, embedding"
     columns = columns.split(", ")
@@ -49,6 +57,8 @@ def fetch_data_model(data_query):
 
 
 def insert_device(device: Device):
+    connection = get_db_connection()
+    
     device_info = device.to_dict()
     cursor = connection.cursor()
 
@@ -101,6 +111,8 @@ def insert_device(device: Device):
 
 
 def get_all_devices():
+    connection = get_db_connection()
+    
     cursor = connection.cursor()
     cursor.execute("select * from devices;")
     devices = cursor.fetchall()
@@ -110,6 +122,8 @@ def get_all_devices():
 
 
 def get_device_by_id(id):
+    connection = get_db_connection()
+    
     cursor = connection.cursor()
     cursor.execute("select * from devices where id=%s ;", (id,))
     device = cursor.fetchone()
@@ -121,7 +135,8 @@ def get_device_by_id(id):
 def get_device_by_types(device_types):
     if not device_types:
         return []
-
+    
+    connection = get_db_connection()
     cursor = connection.cursor()
 
     placeholders = ', '.join(['%s'] * len(device_types))
@@ -137,6 +152,8 @@ def get_device_by_types(device_types):
 
 
 def query_by_vector(query):
+    connection = get_db_connection()
+    
     query_emb = get_embedding_query(query)
     cursor = connection.cursor()
     vector_str = f"[{','.join(map(str, query_emb))}]"
@@ -154,6 +171,8 @@ def query_by_vector(query):
     return result
 
 def get_device_by_price_range(budget):
+    connection = get_db_connection()
+    
     cursor = connection.cursor()
     min_budget = float(budget)*90/100
     max_budget = float(budget)*110/100
@@ -165,6 +184,8 @@ def get_device_by_price_range(budget):
     return result
 
 def get_blog_by_query(query):
+    connection = get_db_connection()
+    
     query_emb = get_embedding_query(query)
     cursor = connection.cursor()
     vector_str = f"[{','.join(map(str, query_emb))}]"
@@ -182,7 +203,10 @@ def get_blog_by_query(query):
     blog_ids = list(set([str(i[0]) for i in result]))
     chunk_contents = [i[1] for i in result]
     return blog_ids, chunk_contents
+
 def get_blog_emb_by_id(blog_id):
+    connection = get_db_connection()
+    
     cursor = connection.cursor()
     cursor.execute("""
                 SELECT embedding
@@ -193,6 +217,8 @@ def get_blog_emb_by_id(blog_id):
     return literal_eval(embedding[0])
 
 def get_related_blog(blog_id):
+    connection = get_db_connection()
+    
     blog_emb = get_blog_emb_by_id(blog_id)
     cursor = connection.cursor()
     vector_str = f"[{','.join(map(str, blog_emb))}]"
@@ -225,6 +251,8 @@ def get_related_blogs(blog_ids):
     return related_blogs
 
 def get_device_retailer_by_id(device_id):
+    connection = get_db_connection()
+    
     cursor = connection.cursor()
     cursor.execute("""
                 SELECT *
