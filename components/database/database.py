@@ -223,3 +223,18 @@ def get_related_blogs(blog_ids):
                 related_blogs[key] = blogs[key]
     related_blogs = sorted(related_blogs.items(), key=lambda item: item[1], reverse=True)
     return related_blogs
+
+def get_device_retailer_by_id(device_id):
+    cursor = connection.cursor()
+    cursor.execute("""
+                SELECT *
+                FROM device_retailers
+                WHERE device_id=%s;
+            """, (device_id,))
+    result = cursor.fetchone()
+    retailers = result[-1]
+    for retailer in retailers:
+        retailer['retailer_url'] = retailer['retailer url']
+        if "retailer url" in retailer.keys():
+            del retailer['retailer url']
+    return retailers
