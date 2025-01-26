@@ -7,7 +7,7 @@ from components.network_opt_algorithm.household_genetic_alg import get_household
 from components.network_opt_algorithm.business_genetic_algorithm import get_business_network_solution
 
 
-def household_network_build(budget, number_of_devices, preferred_frequency, coverage_required, brand_preference=[]):
+def household_network_build(response, budget, number_of_devices, preferred_frequency, coverage_required, brand_preference=[]):
     devices = get_household_network_solution(budget, number_of_devices, coverage_required, preferred_frequency, brand_preference)
     cost = sum([float(i['price']) for i in devices])
     graph = get_graph(devices)
@@ -17,7 +17,9 @@ def household_network_build(budget, number_of_devices, preferred_frequency, cove
     }
     for device in graph['devices']:
         device['img_url'] = img_urls[device['id']]
-    return {"networks": [
+    return {
+        "response": response,
+        "networks": [
         {
             "type": "cost_opt",
             "devices": graph['devices'],
@@ -27,8 +29,7 @@ def household_network_build(budget, number_of_devices, preferred_frequency, cove
     ]}
 
 
-
-def business_network_build(budget, number_of_devices, vlan_requirement, poe_devices, bandwidth_estimation, security_level):
+def business_network_build(response, budget, number_of_devices, vlan_requirement, poe_devices, bandwidth_estimation, security_level):
     devices = get_business_network_solution(budget, number_of_devices, vlan_requirement, poe_devices, bandwidth_estimation, security_level)
     cost = sum([float(i['price']) for i in devices])
     graph = get_graph(devices)
@@ -38,7 +39,9 @@ def business_network_build(budget, number_of_devices, vlan_requirement, poe_devi
     }
     for device in graph['devices']:
         device['img_url'] = img_urls[device['id']]
-    return {"networks": [
+    return {
+        "response": response,
+        "networks": [
         {
             "type": "cost_opt",
             "devices": graph['devices'],
