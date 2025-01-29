@@ -28,7 +28,7 @@ model = genai.GenerativeModel(
       function_declarations = [
         genai.protos.FunctionDeclaration(
           name = "normal_chat",
-          description = "Handles user questions or statements that are not related to networking, network equipment, or the Telecommunications field. This function will respond in a normal manner, appropriate to the next issues of the day.",
+          description = "Handles user questions or statements that are not related to networking, network equipment, or the Telecommunications field. This function will respond in a normal manner, appropriate to the next issues of the day. (*Note: Use a product consultant tone of voice)",
           parameters = content.Schema(
             type = content.Type.OBJECT,
             enum = [],
@@ -73,7 +73,7 @@ model = genai.GenerativeModel(
               ),
               "response": content.Schema(
                 type = content.Type.STRING,
-                description = "statements before product recommendation"
+                description = "statements before product recommendation. (*Note: Use a product consultant tone of voice)"
               )
             },
           ),
@@ -107,7 +107,7 @@ model = genai.GenerativeModel(
               ),
               "response": content.Schema(
                 type = content.Type.STRING,
-                description = "statement before suggesting network equipment that the user requires"
+                description = "statement before suggesting network equipment that the user requires.  (*Note: Use a product consultant tone of voice)"
               )
             },
           ),
@@ -122,7 +122,7 @@ model = genai.GenerativeModel(
             properties = {
               "recommend_question": content.Schema(
                 type = content.Type.STRING,
-                description="Câu hỏi đề xuất thêm các thông tin cần có của mạng hoặc thiết bị mà người dùng cần"
+                description="The question suggests additional information about the network or device that the user needs. (*Note: Use a product consultant tone of voice)"
               ),
             },
           ),
@@ -157,7 +157,7 @@ model = genai.GenerativeModel(
               ),
               "response": content.Schema(
                 type = content.Type.STRING,
-                description = "statement before suggesting network equipment that the user requires"
+                description = "statement before suggesting network equipment that the user requires. (*Note: Use a product consultant tone of voice)"
               )
             },
           ),
