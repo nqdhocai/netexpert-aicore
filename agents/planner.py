@@ -57,7 +57,7 @@ model = genai.GenerativeModel(
         ),
         genai.protos.FunctionDeclaration(
           name = "rcm_devices",
-          description = "trả về các thiết bị khi người dùng yêu cầu các thiết bị mạng",
+          description = "Returns devices when user requests network devices",
           parameters = content.Schema(
             type = content.Type.OBJECT,
             enum = [],
@@ -65,11 +65,11 @@ model = genai.GenerativeModel(
             properties = {
               "budget": content.Schema(
                 type = content.Type.NUMBER,
-                description="Ngân sách dự kiến cho thiết bị mạng (USD)?"
+                description="Estimated budget for network equipment (USD)?"
               ),
               "query": content.Schema(
                   type = content.Type.STRING,
-                  description="tối ưu câu truy vấn theo dạng 1 chuỗi requirement name: detail để truy vấn với vector database"
+                  description="Optimize query in the form of a string requirement name: detail to query with vector database"
               ),
               "response": content.Schema(
                 type = content.Type.STRING,
@@ -80,7 +80,7 @@ model = genai.GenerativeModel(
         ),
         genai.protos.FunctionDeclaration(
           name = "household_network_build",
-          description = "đề xuất mạng lưới thiết bị tối ưu cho gia đình",
+          description = "Recommend the optimal network of devices for your home",
           parameters = content.Schema(
             type = content.Type.OBJECT,
             enum = [],
@@ -88,18 +88,18 @@ model = genai.GenerativeModel(
             properties = {
               "budget": content.Schema(
                 type = content.Type.NUMBER,
-                description="Ngân sách dự kiến cho hệ thống mạng (USD)?"
+                description="Estimated budget for network system (USD)?"
               ),
               "number_of_devices": content.Schema(
                 type = content.Type.NUMBER,
               ),
               "preferred_frequency": content.Schema(
                 type = content.Type.STRING, #[TODO] fix algorithm to use this parameter type as NUMBER, not string
-                description = "ước tính tần số mà người dùng mong muốn (2.4Ghz, 5Ghz, 6Ghz) với đơn vị chuẩn là Mbps"
+                description = "Estimate the frequency that the user wants (2.4Ghz, 5Ghz, 6Ghz) with the standard unit of Mbps"
               ),
               "coverage_required": content.Schema(
                 type = content.Type.NUMBER,
-                description = "Ước tính diện tích phủ sóng với đơn vị chuẩn là m^2"
+                description = "Estimate coverage area with standard unit of m^2"
               ),
               "brand_preference": content.Schema(
                 type = content.Type.STRING,
@@ -114,7 +114,7 @@ model = genai.GenerativeModel(
         ),
         genai.protos.FunctionDeclaration(
           name = "get_more_req",
-          description = "nếu các yêu cầu về mạng của người dùng chưa rõ ràng hoặc chưa đủ, tiếp tục hỏi để thu thập thông tin",
+          description = "If the user's network requirements are unclear or insufficient, continue asking to gather information.",
           parameters = content.Schema(
             type = content.Type.OBJECT,
             enum = [],
@@ -129,7 +129,7 @@ model = genai.GenerativeModel(
         ),
         genai.protos.FunctionDeclaration(
           name = "business_network_build",
-          description = "đề xuất mạng lưới thiết bị tối ưu cho doanh nghiệp",
+          description = "Recommend optimal network equipment for business",
           parameters = content.Schema(
             type = content.Type.OBJECT,
             enum = [],
@@ -149,11 +149,11 @@ model = genai.GenerativeModel(
               ),
               "bandwidth_estimation": content.Schema(
                 type = content.Type.NUMBER,
-                description="ước tính băng thông của mạng (chuẩn hóa lại với đơn vị Mbps)"
+                description="network bandwidth estimate (renormalized to Mbps)"
               ),
               "security_level": content.Schema(
                 type = content.Type.STRING,
-                description="Mức độ bảo mật mong muốn? (Ví dụ: WPA3, VPN, Firewall)"
+                description="What level of security is desired? (Examples: WPA3, VPN, Firewall)"
               ),
               "response": content.Schema(
                 type = content.Type.STRING,
