@@ -10,7 +10,6 @@ def get_recommendation(request: ChatRequest):
     try:
         location = request.location
         history = [i.model_dump() for i in request.history]
-        history.reverse() #[TODO] delete after BE fix history
         response = get_response(history)
         return ResponseModel(**response)
     except ValueError as e:
