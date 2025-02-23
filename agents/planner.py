@@ -1,183 +1,101 @@
-"""
-Install an additional SDK for JSON schema support Google AI Python SDK
-
-$ pip install google.ai.generativelanguage
-"""
-
 import os
 import google.generativeai as genai
 from google.ai.generativelanguage_v1beta.types import content
 
+# Configure API key
 genai.configure(api_key=os.getenv('GEMINI_API'))
 
-# Create the model
+# Model configuration
 generation_config = {
-  "temperature": 0.95,
-  "top_p": 0.95,
-  "top_k": 40,
-  "max_output_tokens": 8192,
-  "response_mime_type": "text/plain",
+    "temperature": 0.95,
+    "top_p": 0.95,
+    "top_k": 40,
+    "max_output_tokens": 8192,
+    "response_mime_type": "text/plain",
 }
 
+# Function to create function declarations
+def create_function_declaration(name, description, required, properties):
+    return genai.protos.FunctionDeclaration(
+        name=name,
+        description=description,
+        parameters=content.Schema(
+            type=content.Type.OBJECT,
+            required=required,
+            properties=properties,
+        ),
+    )
 
-model = genai.GenerativeModel(
-  model_name="gemini-2.0-flash-exp",
-  generation_config=generation_config,
-  tools = [
-    genai.protos.Tool(
-      function_declarations = [
-        genai.protos.FunctionDeclaration(
-          name = "normal_chat",
-          description = "Handles user questions or statements that are not related to networking, network equipment, or the Telecommunications field. This function will respond in a normal manner, appropriate to the next issues of the day. (*Note: Use a product consultant tone and always be cheerful with customers.)",
-          parameters = content.Schema(
-            type = content.Type.OBJECT,
-            enum = [],
-            required = ["response"],
-            properties = {
-              "response": content.Schema(
-                type = content.Type.STRING,
-              ),
-            },
-          ),
-        ),
-        genai.protos.FunctionDeclaration(
-          name = "technical_chat",
-          description = "Support answering technical questions related to computer networks, network equipment, and telecommunications issues. The system has the ability to automatically standardize questions to ensure accurate and contextual answers. Suitable for both individual users and technical experts.",
-          parameters = content.Schema(
-            type = content.Type.OBJECT,
-            enum = [],
-            required = ["question"],
-            properties = {
-              "question": content.Schema(
-                type = content.Type.STRING,
-                description="The content of the question that needs to be answered. The system will automatically standardize the question (if necessary) to optimize the processing."
-              ),
-            },
-          ),
-        ),
-        genai.protos.FunctionDeclaration(
-          name = "rcm_devices",
-          description = "Returns devices when user requests network devices",
-          parameters = content.Schema(
-            type = content.Type.OBJECT,
-            enum = [],
-            required = ['query', "response"],
-            properties = {
-              "budget": content.Schema(
-                type = content.Type.NUMBER,
-                description="Estimated budget for network equipment (USD)?"
-              ),
-              "query": content.Schema(
-                  type = content.Type.STRING,
-                  description="Optimize query in the form of a string requirement name: detail to query with vector database"
-              ),
-              "response": content.Schema(
-                type = content.Type.STRING,
-                description = "statements before product recommendation. (*Note: Use a product consultant tone and always be cheerful with customers.)"
-              )
-            },
-          ),
-        ),
-        genai.protos.FunctionDeclaration(
-          name = "household_network_build",
-          description = "Recommend the optimal network of devices for your home",
-          parameters = content.Schema(
-            type = content.Type.OBJECT,
-            enum = [],
-            required = ["response", "budget", "number_of_devices", "preferred_frequency", "coverage_required"],
-            properties = {
-              "budget": content.Schema(
-                type = content.Type.NUMBER,
-                description="Estimated budget for network system (USD)?"
-              ),
-              "number_of_devices": content.Schema(
-                type = content.Type.NUMBER,
-              ),
-              "preferred_frequency": content.Schema(
-                type = content.Type.STRING, #[TODO] fix algorithm to use this parameter type as NUMBER, not string
-                description = "Estimate the frequency that the user wants (2.4Ghz, 5Ghz, 6Ghz) with the standard unit of Mbps"
-              ),
-              "coverage_required": content.Schema(
-                type = content.Type.NUMBER,
-                description = "Estimate coverage area with standard unit of m^2"
-              ),
-              "brand_preference": content.Schema(
-                type = content.Type.STRING,
-                enum=[]
-              ),
-              "response": content.Schema(
-                type = content.Type.STRING,
-                description = "statement before suggesting network equipment that the user requires.  (*Note: Use a product consultant tone and always be cheerful with customers.)"
-              )
-            },
-          ),
-        ),
-        genai.protos.FunctionDeclaration(
-          name = "get_more_req",
-          description = "If the user's network requirements are unclear or insufficient, continue asking to gather information.",
-          parameters = content.Schema(
-            type = content.Type.OBJECT,
-            enum = [],
-            required = ["recommend_question"],
-            properties = {
-              "recommend_question": content.Schema(
-                type = content.Type.STRING,
-                description="The question suggests additional information about the network or device that the user needs. (*Note: Use a product consultant tone and always be cheerful with customers.)"
-              ),
-            },
-          ),
-        ),
-        genai.protos.FunctionDeclaration(
-          name = "business_network_build",
-          description = "Recommend optimal network equipment for business",
-          parameters = content.Schema(
-            type = content.Type.OBJECT,
-            enum = [],
-            required = ["response", "budget", "number_of_devices", "vlan_requirement", "poe_devices", "bandwidth_estimation", "security_level"],
-            properties = {
-              "budget": content.Schema(
-                type = content.Type.NUMBER,
-              ),
-              "number_of_devices": content.Schema(
-                type = content.Type.INTEGER
-              ),
-              "vlan_requirement": content.Schema(
-                type = content.Type.STRING,
-              ),
-              "poe_devices": content.Schema(
-                type = content.Type.INTEGER,
-              ),
-              "bandwidth_estimation": content.Schema(
-                type = content.Type.NUMBER,
-                description="network bandwidth estimate (renormalized to Mbps)"
-              ),
-              "security_level": content.Schema(
-                type = content.Type.STRING,
-                description="What level of security is desired? (Examples: WPA3, VPN, Firewall)"
-              ),
-              "response": content.Schema(
-                type = content.Type.STRING,
-                description = "statement before suggesting network equipment that the user requires. (*Note: Use a product consultant tone and always be cheerful with customers.)"
-              )
-            },
-          ),
-        ),
-      ],
+# Define tool functions
+tool_functions = [
+    create_function_declaration(
+        "normal_chat",
+        "Handles user questions unrelated to networking, responding cheerfully in a consultant tone.",
+        ["response"],
+        {"response": content.Schema(type=content.Type.STRING)},
     ),
-  ],
-  tool_config={'function_calling_config':'ANY'},
+    create_function_declaration(
+        "technical_chat",
+        "Supports answering technical questions related to networks and telecommunications.",
+        ["question"],
+        {"question": content.Schema(type=content.Type.STRING, description="Standardized technical question.")},
+    ),
+    create_function_declaration(
+        "rcm_devices",
+        "Returns recommended network devices based on user requests.",
+        ["query", "response"],
+        {
+            "budget": content.Schema(type=content.Type.NUMBER, description="Estimated budget (USD)."),
+            "query": content.Schema(type=content.Type.STRING, description="Optimized query for vector database."),
+            "response": content.Schema(type=content.Type.STRING, description="Pre-recommendation statement."),
+        },
+    ),
+    create_function_declaration(
+        "household_network_build",
+        "Recommends an optimal home network setup.",
+        ["response", "budget", "number_of_devices", "preferred_frequency", "coverage_required"],
+        {
+            "budget": content.Schema(type=content.Type.NUMBER, description="Estimated budget (USD)."),
+            "number_of_devices": content.Schema(type=content.Type.NUMBER),
+            "preferred_frequency": content.Schema(type=content.Type.STRING, description="Preferred frequency (e.g., 2.4GHz, 5GHz)."),
+            "coverage_required": content.Schema(type=content.Type.NUMBER, description="Coverage area in m²."),
+            "brand_preference": content.Schema(type=content.Type.STRING),
+            "response": content.Schema(type=content.Type.STRING, description="Pre-recommendation statement."),
+        },
+    ),
+    create_function_declaration(
+        "get_more_req",
+        "Requests additional network requirement details from the user.",
+        ["recommend_question"],
+        {"recommend_question": content.Schema(type=content.Type.STRING, description="Clarifying question for the user.")},
+    ),
+    create_function_declaration(
+        "business_network_build",
+        "Recommends optimal business network equipment.",
+        ["response", "budget", "number_of_devices", "vlan_requirement", "poe_devices", "bandwidth_estimation", "security_level"],
+        {
+            "budget": content.Schema(type=content.Type.NUMBER),
+            "number_of_devices": content.Schema(type=content.Type.INTEGER),
+            "vlan_requirement": content.Schema(type=content.Type.STRING),
+            "poe_devices": content.Schema(type=content.Type.INTEGER),
+            "bandwidth_estimation": content.Schema(type=content.Type.NUMBER, description="Bandwidth estimate in Mbps."),
+            "security_level": content.Schema(type=content.Type.STRING, description="Desired security level (e.g., WPA3, VPN)."),
+            "response": content.Schema(type=content.Type.STRING, description="Pre-recommendation statement."),
+        },
+    ),
+]
+
+# Initialize Generative Model
+model = genai.GenerativeModel(
+    model_name="gemini-2.0-flash-exp",
+    generation_config=generation_config,
+    tools=[genai.protos.Tool(function_declarations=tool_functions)],
+    tool_config={'function_calling_config': 'ANY'},
 )
 
+# Function to get action based on history
 def get_action(history):
     print(history)
-    if len(history) >= 2:
-        chat_session = model.start_chat(
-            history = history[0:-2],
-        )
-    else:
-        chat_session = model.start_chat()
+    chat_session = model.start_chat(history=history[:-2] if len(history) >= 2 else [])
     response = chat_session.send_message(history[-1]['parts'][0])
-    if fn := response.parts[0].function_call:
-        return (fn.name, dict(fn.args))
-    else:
-        return None
+    return (response.parts[0].function_call.name, dict(response.parts[0].function_call.args)) if response.parts[0].function_call else None
