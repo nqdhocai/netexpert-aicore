@@ -67,7 +67,7 @@ tool_functions = [
     ),
     create_function_declaration(
         "get_more_req",
-        f"{SYSTEM_PROMPT} Requests additional network requirement details from the user.",
+        f"{SYSTEM_PROMPT} Requests additional network requirement details from the user if not enought info to build optimize network.",
         ["recommend_question"],
         {"recommend_question": content.Schema(type=content.Type.STRING, description="Clarifying question for the user with a cheerful, friendly tone like an expert and consultant.")},
     ),
