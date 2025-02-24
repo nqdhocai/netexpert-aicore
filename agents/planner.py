@@ -26,33 +26,35 @@ def create_function_declaration(name, description, required, properties):
         ),
     )
 
+SYSTEM_PROMPT = "You are NetExpert - A virtual network assistant expert."
+
 # Define tool functions
 tool_functions = [
     create_function_declaration(
         "normal_chat",
-        "Handles user questions unrelated to networking, responding cheerfully in a consultant tone.",
+        f"{SYSTEM_PROMPT} Handles user questions unrelated to networking, responding cheerfully in a consultant tone.",
         ["response"],
         {"response": content.Schema(type=content.Type.STRING)},
     ),
     create_function_declaration(
         "technical_chat",
-        "Supports answering technical questions related to networks and telecommunications.",
+        f"{SYSTEM_PROMPT} Supports answering technical questions related to networks and telecommunications.",
         ["question"],
         {"question": content.Schema(type=content.Type.STRING, description="Standardized technical question.")},
     ),
     create_function_declaration(
         "rcm_devices",
-        "Returns recommended network devices based on user requests.",
+        f"{SYSTEM_PROMPT} Returns recommended network devices based on user requests.",
         ["query", "response"],
         {
             "budget": content.Schema(type=content.Type.NUMBER, description="Estimated budget (USD)."),
             "query": content.Schema(type=content.Type.STRING, description="Optimized query for vector database."),
-            "response": content.Schema(type=content.Type.STRING, description="Pre-recommendation statement."),
+            "response": content.Schema(type=content.Type.STRING, description="Pre-recommendation statement with a cheerful, friendly tone like an expert and consultant."),
         },
     ),
     create_function_declaration(
         "household_network_build",
-        "Recommends an optimal home network setup.",
+        f"{SYSTEM_PROMPT} Recommends an optimal home network setup.",
         ["response", "budget", "number_of_devices", "preferred_frequency", "coverage_required"],
         {
             "budget": content.Schema(type=content.Type.NUMBER, description="Estimated budget (USD)."),
@@ -60,18 +62,18 @@ tool_functions = [
             "preferred_frequency": content.Schema(type=content.Type.STRING, description="Preferred frequency (e.g., 2.4GHz, 5GHz)."),
             "coverage_required": content.Schema(type=content.Type.NUMBER, description="Coverage area in m²."),
             "brand_preference": content.Schema(type=content.Type.STRING),
-            "response": content.Schema(type=content.Type.STRING, description="Pre-recommendation statement."),
+            "response": content.Schema(type=content.Type.STRING, description="Pre-recommendation statement with a cheerful, friendly tone like an expert and consultant."),
         },
     ),
     create_function_declaration(
         "get_more_req",
-        "Requests additional network requirement details from the user.",
+        f"{SYSTEM_PROMPT} Requests additional network requirement details from the user.",
         ["recommend_question"],
-        {"recommend_question": content.Schema(type=content.Type.STRING, description="Clarifying question for the user.")},
+        {"recommend_question": content.Schema(type=content.Type.STRING, description="Clarifying question for the user with a cheerful, friendly tone like an expert and consultant.")},
     ),
     create_function_declaration(
         "business_network_build",
-        "Recommends optimal business network equipment.",
+        f"{SYSTEM_PROMPT} Recommends optimal business network equipment.",
         ["response", "budget", "number_of_devices", "vlan_requirement", "poe_devices", "bandwidth_estimation", "security_level"],
         {
             "budget": content.Schema(type=content.Type.NUMBER),
@@ -80,7 +82,7 @@ tool_functions = [
             "poe_devices": content.Schema(type=content.Type.INTEGER),
             "bandwidth_estimation": content.Schema(type=content.Type.NUMBER, description="Bandwidth estimate in Mbps."),
             "security_level": content.Schema(type=content.Type.STRING, description="Desired security level (e.g., WPA3, VPN)."),
-            "response": content.Schema(type=content.Type.STRING, description="Pre-recommendation statement."),
+            "response": content.Schema(type=content.Type.STRING, description="Pre-recommendation statement with a cheerful, friendly tone like an expert and consultant."),
         },
     ),
 ]
