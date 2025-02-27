@@ -1,18 +1,11 @@
 import os
 import google.generativeai as genai
 from google.ai.generativelanguage_v1beta.types import content
+from .model import generation_config
 
 # Configure API key
 genai.configure(api_key=os.getenv('GEMINI_API'))
 
-# Model configuration
-generation_config = {
-    "temperature": 0.95,
-    "top_p": 0.95,
-    "top_k": 40,
-    "max_output_tokens": 8192,
-    "response_mime_type": "text/plain",
-}
 
 # Function to create function declarations
 def create_function_declaration(name, description, required, properties):

@@ -4,7 +4,8 @@ from ast import literal_eval
 import psycopg2
 import os
 
-
+from dotenv import load_dotenv
+load_dotenv()
 # Fetch variables
 USER = os.getenv("user")
 PASSWORD = os.getenv("password")
@@ -150,6 +151,13 @@ def get_device_by_types(device_types):
 
     return [row[0] for row in results]
 
+def insert_blog_chunk(blog_id, content, embedding):
+    connection = get_db_connection()
+    
+    cursor = connection.cursor()
+    cursor.execute("""INSERT INTO blog_chunks (blog_id, content, embedding) VALUES (%s, %s, %s);""", (blog_id, content, embedding))
+    connection.commit()
+    cursor.close()
 
 def query_by_vector(query):
     connection = get_db_connection()
@@ -183,22 +191,31 @@ def get_device_by_price_range(budget):
     result = cursor.fetchall()
     return result
 
-def get_blog_by_query(query):
+def get_all_blog():
+    connection = get_db_connection()
+    
+    cursor = connection.cursor()
+    cursor.execute("select id, title, content from blogs;")
+    blogs = cursor.fetchall()
+    cursor.close()
+    return blogs
+
+def get_blog_by_query(query, threshold=0.35):
     connection = get_db_connection()
     
     query_emb = get_embedding_query(query)
     cursor = connection.cursor()
     vector_str = f"[{','.join(map(str, query_emb))}]"
 
-    # Thực hiện truy vấn tìm kiếm vector tương tự
+    # Thực hiện truy vấn tìm kiếm vector tương tự có ngưỡng threshold
     cursor.execute("""
             SELECT blog_id, content, embedding <=> %s AS distance
             FROM blog_chunks
+            WHERE embedding <=> %s < %s  -- Thêm điều kiện lọc
             ORDER BY distance
-            LIMIT 3;
-        """, (vector_str,))
+            LIMIT 10;
+        """, (vector_str, vector_str, threshold))
 
-    # In kết quả
     result = cursor.fetchall()
     blog_ids = list(set([str(i[0]) for i in result]))
     chunk_contents = [i[1] for i in result]

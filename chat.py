@@ -1,5 +1,5 @@
-from agents.planner import get_action
-from agents import device_rcm, normal_chat, technical_expert, network_builder
+from aicore.planner import get_action
+from aicore import device_rcm, normal_chat, technical_expert, network_builder
 
 functions = {
     "normal_chat": normal_chat.normal_chat,
