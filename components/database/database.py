@@ -4,8 +4,8 @@ from ast import literal_eval
 import psycopg2
 import os
 
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
 
 # Fetch variables
 USER = os.getenv("user")
