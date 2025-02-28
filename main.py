@@ -3,7 +3,6 @@ import sys
 from fastapi import FastAPI
 import uvicorn
 from api.chat import router as chat_router
-from api.retailer import router as retailer_router
 from api.blog import router as blog_router
 
 # Add the root directory to PYTHONPATH
@@ -13,7 +12,6 @@ app = FastAPI()
 
 # Include routers
 app.include_router(chat_router)
-app.include_router(retailer_router)
 app.include_router(blog_router)
 
 @app.get('/')
