@@ -37,14 +37,24 @@ tool_functions = [
     ),
     create_function_declaration(
         "rcm_devices",
-        f"{SYSTEM_PROMPT} Returns recommended network devices based on user requests.",
+        f"{SYSTEM_PROMPT} Provides expert recommendations for network devices based on user requirements, such as budget, performance needs, and specific use cases.",
         ["query", "response"],
         {
-            "budget": content.Schema(type=content.Type.NUMBER, description="Estimated budget (USD)."),
-            "query": content.Schema(type=content.Type.STRING, description="Optimized query for vector database."),
-            "response": content.Schema(type=content.Type.STRING, description="Pre-recommendation statement with a cheerful, friendly tone like an expert and consultant."),
-        },
-    ),
+            "budget": content.Schema(
+                type=content.Type.NUMBER,
+                description=(
+                    "The user's estimated budget in USD for purchasing network devices. This helps tailor recommendations to affordable and suitable options."
+                ),),
+            "query": content.Schema(
+                type=content.Type.STRING,
+                description=(
+                    "An optimized search query designed for a vector database to retrieve relevant network device recommendations based on the user's requirements."
+                ),),
+            "response": content.Schema(
+                type=content.Type.STRING,
+                description=(
+                    "A friendly and expert-level pre-recommendation statement that provides an engaging, consultative introduction before listing the suggested network devices."
+                ),),},),
     create_function_declaration(
         "household_network_build",
         f"{SYSTEM_PROMPT} Recommends an optimal home network setup.",
@@ -82,7 +92,7 @@ tool_functions = [
 
 # Initialize Generative Model
 model = genai.GenerativeModel(
-    model_name="gemini-2.0-flash-exp",
+    model_name="gemini-2.0-flash-lite",
     generation_config=generation_config,
     tools=[genai.protos.Tool(function_declarations=tool_functions)],
     tool_config={'function_calling_config': 'ANY'},
