@@ -66,6 +66,8 @@ tool_functions = [
             "coverage_required": content.Schema(type=content.Type.NUMBER, description="Coverage area in m²."),
             "brand_preference": content.Schema(type=content.Type.STRING),
             "response": content.Schema(type=content.Type.STRING, description="Pre-recommendation statement with a cheerful, friendly tone like an expert and consultant."),
+            "nation": content.Schema(type=content.Type.STRING, description="Nation of the user."),
+            "province": content.Schema(type=content.Type.STRING, description="Province of the user. If it is empty dont return anyone"),
         },
     ),
     create_function_declaration(
@@ -77,7 +79,7 @@ tool_functions = [
     create_function_declaration(
         "business_network_build",
         f"{SYSTEM_PROMPT} Recommends optimal business network equipment.",
-        ["response", "budget", "number_of_devices", "vlan_requirement", "poe_devices", "bandwidth_estimation", "security_level"],
+        ["response", "budget", "number_of_devices", "vlan_requirement", "poe_devices", "bandwidth_estimation", "security_level",],
         {
             "budget": content.Schema(type=content.Type.NUMBER),
             "number_of_devices": content.Schema(type=content.Type.INTEGER),
@@ -86,10 +88,32 @@ tool_functions = [
             "bandwidth_estimation": content.Schema(type=content.Type.NUMBER, description="Bandwidth estimate in Mbps."),
             "security_level": content.Schema(type=content.Type.STRING, description="Desired security level (e.g., WPA3, VPN)."),
             "response": content.Schema(type=content.Type.STRING, description="Pre-recommendation statement with a cheerful, friendly tone like an expert and consultant."),
+            "nation": content.Schema(type=content.Type.STRING, description="Nation of the user."),
+            "province": content.Schema(type=content.Type.STRING, description="Province of the user. If it is empty dont return any one"),
         },
-    ),
+    )
 ]
 
+report_tool = [
+    create_function_declaration(
+        "get_report",
+        f"""
+            Generate a step-by-step tutorial on how to connect devices based on a given diagram.
+
+            Returns:
+            - str: A detailed tutorial guiding users on how to establish the connections described in the diagram.
+
+            Features:
+            - Identifies device roles and required equipment.
+            - Provides instructions for both wired and wireless setups.
+            - Covers network configuration (IP assignment, protocols, etc.).
+            - Includes troubleshooting steps for common issues.
+            - Supports different connection preferences (if specified).
+        """,
+        ['response'],
+        {'response': content.Schema(type=content.Type.STRING, description="A detailed tutorial guiding users on how to establish the connections described in the diagram")}
+    )
+]
 # Initialize Generative Model
 model = genai.GenerativeModel(
     model_name="gemini-2.0-flash-lite",
@@ -98,9 +122,20 @@ model = genai.GenerativeModel(
     tool_config={'function_calling_config': 'ANY'},
 )
 
+report__model = genai.GenerativeModel(
+    model_name="gemini-2.0-flash-lite",
+    generation_config=generation_config,
+    tools=[genai.protos.Tool(function_declarations=report_tool)],
+    tool_config={'function_calling_config': 'ANY'},
+)
 # Function to get action based on history
-def get_action(history):
+def get_action(history, nation, province):
     print(history)
     chat_session = model.start_chat(history=history[:-2] if len(history) >= 2 else [])
-    response = chat_session.send_message(history[-1]['parts'][0])
+    response = chat_session.send_message(history[-1]['parts'][0] + f"###USER LOCATION \nnation: {nation} \nprovince: {province}")
     return (response.parts[0].function_call.name, dict(response.parts[0].function_call.args)) if response.parts[0].function_call else None
+
+def get_report(history):
+    chat_session = model.start_chat(history=[])
+    response = chat_session.send_message(history[-1]['parts'][0])
+    return dict(response.parts[0].function_call.args)['response']

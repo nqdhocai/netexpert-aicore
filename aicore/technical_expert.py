@@ -16,3 +16,8 @@ def technical_chat(question):
         "response": response,
         "blogs": blog_ids
     }
+
+def get_report(response):
+    return {
+        "response": response
+    }

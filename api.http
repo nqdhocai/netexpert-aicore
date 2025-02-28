@@ -1,0 +1,15 @@
+###
+POST http://0.0.0.0:12301/api/v1/chat/report HTTP/1.1
+Content-Type: application/json
+
+{
+  "location": "adsfadsf",
+  "history": [
+    {
+      "role": "user",
+      "parts": [
+        "give me a report"
+      ]
+    }
+  ]
+}

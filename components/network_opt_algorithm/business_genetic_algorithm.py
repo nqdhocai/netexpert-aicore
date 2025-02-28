@@ -1,6 +1,6 @@
 import random
 import pandas as pd
-from components.database.database import get_all_devices
+from components.database.database import get_device_by_location, get_all_devices
 import re
 
 def create_population(data, population_size, num_devices, vlan_requirement, poe_devices, bandwidth_estimation):
@@ -83,8 +83,16 @@ def genetic_algorithm(data, budget, num_devices, vlan_requirement, poe_devices, 
                         key=lambda x: fitness_function(x, budget, num_devices, vlan_requirement, poe_devices, bandwidth_estimation, security_level))
     return best_solution
 
-def get_business_network_solution(budget, num_devices, vlan_requirement, poe_devices, bandwidth_estimation, security_level):
-    data = pd.DataFrame(get_all_devices())
+def get_business_network_solution(budget, num_devices, vlan_requirement, poe_devices, bandwidth_estimation, security_level, nation, province):
+    if province == "" or nation=="Global":
+        devices = get_all_devices()
+    else:
+        devices = get_device_by_location(nation, province)
+
+    if devices is None:
+        devices = get_all_devices()
+        
+    data = pd.DataFrame(devices)
     population_size = 50
     num_generations = 100
     mutation_rate = 0.1

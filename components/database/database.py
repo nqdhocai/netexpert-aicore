@@ -4,8 +4,9 @@ from ast import literal_eval
 import psycopg2
 import os
 
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
+
 # Fetch variables
 USER = os.getenv("user")
 PASSWORD = os.getenv("password")
@@ -118,6 +119,37 @@ def get_all_devices():
     cursor.execute("select * from devices;")
     devices = cursor.fetchall()
     devices = [fetch_data_model(device) for device in devices]
+    cursor.close()
+    return devices
+
+def get_device_by_location(nation="Global", province=""):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    # Kiểm tra nếu nation tồn tại trong bảng retailers
+    cursor.execute("SELECT COUNT(*) FROM retailers WHERE nation = %s;", (nation,))
+    nation_exists = cursor.fetchone()[0] > 0
+
+    if not nation_exists:
+        nation = "Global"
+    if not province:
+        province = None
+
+    # Truy vấn thiết bị dựa trên nation trước, rồi đến province
+    query = """
+        SELECT DISTINCT d.*
+        FROM devices d
+        JOIN device_retailers dr ON d.id = dr.device_id
+        JOIN retailers r ON dr.retailer_id = r.id
+        WHERE r.nation = %s
+          AND (r.province = %s OR %s IS NULL);
+    """
+    cursor.execute(query, (nation, province, province))
+    devices = cursor.fetchall()
+    
+    # Chuyển đổi dữ liệu sang định dạng mong muốn
+    devices = [fetch_data_model(device) for device in devices]
+
     cursor.close()
     return devices
 

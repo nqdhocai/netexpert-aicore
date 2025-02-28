@@ -1,6 +1,6 @@
 import random
 import pandas as pd
-from components.database.database import get_all_devices
+from components.database.database import get_device_by_location, get_all_devices
 import re
 
 # Hàm tạo quần thể
@@ -105,8 +105,15 @@ def genetic_algorithm(data, budget, num_devices, coverage_required, preferred_fr
                                                        brand_preference))
     return best_solution
 
-def get_household_network_solution(budget, num_devices, coverage_required, preferred_frequency, brand_preference):
-    data = pd.DataFrame(get_all_devices())
+def get_household_network_solution(budget, num_devices, coverage_required, preferred_frequency, brand_preference, nation, province):
+    if province == "" or nation=="Global":
+        devices = get_all_devices()
+    else:
+        devices = get_device_by_location(nation, province)
+    if devices is None:
+        devices = get_all_devices()
+        
+    data = pd.DataFrame(devices)
     population_size = 50
     num_generations = 100
     mutation_rate = 0.1
@@ -118,5 +125,3 @@ def get_household_network_solution(budget, num_devices, coverage_required, prefe
         if 'embedding' in device.keys():
             del device['embedding']
     return best_solution
-
-# Tham số đầu vào

@@ -4,12 +4,12 @@ from google.ai.generativelanguage_v1beta.types import content
 from components.network_opt_algorithm.household_genetic_alg import get_household_network_solution
 from components.network_opt_algorithm.business_genetic_algorithm import get_business_network_solution
 
-def household_network_build(response, budget, number_of_devices, preferred_frequency, coverage_required, brand_preference=[]):
-    devices = get_household_network_solution(budget, number_of_devices, coverage_required, preferred_frequency, brand_preference)
+def household_network_build(response, budget, number_of_devices, preferred_frequency, coverage_required, nation="Global", province="", brand_preference=[]):
+    devices = get_household_network_solution(budget, number_of_devices, coverage_required, preferred_frequency, brand_preference, nation, province)
     return generate_network_response(response, devices)
 
-def business_network_build(response, budget, number_of_devices, vlan_requirement, poe_devices, bandwidth_estimation, security_level):
-    devices = get_business_network_solution(budget, number_of_devices, vlan_requirement, poe_devices, bandwidth_estimation, security_level)
+def business_network_build(response, budget, number_of_devices, vlan_requirement, poe_devices, bandwidth_estimation, security_level, nation="Global", province=""):
+    devices = get_business_network_solution(budget, number_of_devices, vlan_requirement, poe_devices, bandwidth_estimation, security_level, nation, province)
     return generate_network_response(response, devices)
 
 def get_more_req(recommend_question):
