@@ -122,7 +122,7 @@ model = genai.GenerativeModel(
     tool_config={'function_calling_config': 'ANY'},
 )
 
-report__model = genai.GenerativeModel(
+report_model = genai.GenerativeModel(
     model_name="gemini-2.0-flash-lite",
     generation_config=generation_config,
     tools=[genai.protos.Tool(function_declarations=report_tool)],
@@ -136,6 +136,6 @@ def get_action(history, nation, province):
     return (response.parts[0].function_call.name, dict(response.parts[0].function_call.args)) if response.parts[0].function_call else None
 
 def get_report(history):
-    chat_session = model.start_chat(history=[])
+    chat_session = report_model.start_chat(history=[])
     response = chat_session.send_message(history[-1]['parts'][0])
     return dict(response.parts[0].function_call.args)['response']
